@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageCircle, Send, X, Bot, User } from 'lucide-react';
 
@@ -53,7 +54,7 @@ const ChatBot = () => {
               const bulletText = line.trim().substring(2); // Remove the "- " or "* "
               return (
                 <div key={lIndex} className="flex items-start space-x-2 ml-4">
-                  <span className="text-orange-400 font-bold mt-0.5">•</span>
+                  <span className="text-orange-500 font-bold mt-0.5">•</span>
                   <span>{formatTextWithBold(bulletText)}</span>
                 </div>
               );
@@ -65,7 +66,7 @@ const ChatBot = () => {
               const [, number, content] = numberedMatch;
               return (
                 <div key={lIndex} className="flex items-start space-x-2 ml-4">
-                  <span className="text-pink-500 font-semibold min-w-[20px] mt-0.5">{number}.</span>
+                  <span className="text-orange-600 font-semibold min-w-[20px] mt-0.5">{number}.</span>
                   <span>{formatTextWithBold(content)}</span>
                 </div>
               );
@@ -174,16 +175,16 @@ const ChatBot = () => {
       {/* Floating Chat Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600 rounded-full shadow-2xl hover:shadow-orange-500/25 transform hover:scale-110 transition-all duration-300 flex items-center justify-center z-50 ${isOpen ? 'hidden' : 'block'} ring-2 ring-orange-300/30`}
+        className={`fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600 rounded-full shadow-2xl hover:shadow-orange-500/25 transform hover:scale-110 transition-all duration-300 flex items-center justify-center z-50 ${isOpen ? 'hidden' : 'block'} ring-2 ring-white/20`}
       >
         <MessageCircle className="w-7 h-7 text-white" />
       </button>
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-[420px] h-[580px] bg-gradient-to-b from-orange-50 to-purple-50 rounded-2xl shadow-2xl border border-orange-200 z-50 flex flex-col overflow-hidden backdrop-blur-sm">
+        <div className="fixed bottom-6 right-6 w-[420px] h-[580px] bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 flex flex-col overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-orange-500 to-pink-500 text-white p-5 flex justify-between items-center">
+          <div className="bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 text-white p-5 flex justify-between items-center">
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
                 <Bot className="w-5 h-5" />
@@ -199,7 +200,7 @@ const ChatBot = () => {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-orange-50 via-white to-purple-50">
+          <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-orange-50 to-pink-50">
             {messages.map((message) => (
               <div
                 key={message.id}
@@ -208,8 +209,8 @@ const ChatBot = () => {
                 {/* Avatar */}
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
                   message.isUser 
-                    ? 'bg-gradient-to-br from-pink-500 to-purple-600' 
-                    : 'bg-gradient-to-br from-orange-500 to-pink-500'
+                    ? 'bg-gradient-to-br from-teal-400 to-cyan-600' 
+                    : 'bg-gradient-to-br from-orange-500 to-pink-600'
                 }`}>
                   {message.isUser ? (
                     <User className="w-4 h-4 text-white" />
@@ -221,7 +222,7 @@ const ChatBot = () => {
                 <div className={`flex flex-col max-w-[85%] ${message.isUser ? 'items-end' : 'items-start'}`}>
                   {/* Sender Label */}
                   <span className={`text-xs font-medium mb-1 ${
-                    message.isUser ? 'text-pink-600' : 'text-orange-600'
+                    message.isUser ? 'text-teal-600' : 'text-orange-600'
                   }`}>
                     {message.isUser ? 'You' : 'AI'}
                   </span>
@@ -230,8 +231,8 @@ const ChatBot = () => {
                   <div
                     className={`px-4 py-3 rounded-2xl shadow-sm border ${
                       message.isUser
-                        ? 'bg-gradient-to-br from-pink-500 to-purple-600 text-white border-pink-200'
-                        : 'bg-white text-gray-800 border-orange-200 shadow-md'
+                        ? 'bg-gradient-to-br from-teal-500 to-cyan-600 text-white border-teal-200'
+                        : 'bg-white text-gray-800 border-gray-200 shadow-md'
                     }`}
                   >
                     <div className="text-sm leading-relaxed font-medium">
@@ -244,17 +245,17 @@ const ChatBot = () => {
             
             {isLoading && (
               <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-pink-500 rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-pink-600 rounded-full flex items-center justify-center">
                   <Bot className="w-4 h-4 text-white" />
                 </div>
                 <div className="flex flex-col">
                   <span className="text-xs font-medium text-orange-600 mb-1">AI</span>
-                  <div className="bg-white border border-orange-200 shadow-md px-4 py-3 rounded-2xl">
+                  <div className="bg-white border border-gray-200 shadow-md px-4 py-3 rounded-2xl">
                     <div className="flex items-center space-x-2">
                       <div className="flex space-x-1">
                         <div className="w-2 h-2 bg-orange-400 rounded-full animate-bounce"></div>
                         <div className="w-2 h-2 bg-pink-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                        <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                        <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                       </div>
                       <span className="text-sm text-gray-500 font-medium">AI is typing...</span>
                     </div>
@@ -266,7 +267,7 @@ const ChatBot = () => {
           </div>
 
           {/* Input */}
-          <div className="p-5 border-t border-orange-200 bg-white/80 backdrop-blur-sm">
+          <div className="p-5 border-t border-gray-100 bg-white">
             <div className="flex space-x-3">
               <input
                 type="text"
@@ -274,7 +275,7 @@ const ChatBot = () => {
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Type your question..."
-                className="flex-1 px-4 py-3 border border-orange-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm font-medium placeholder-gray-400 shadow-sm bg-white"
+                className="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm font-medium placeholder-gray-400 shadow-sm"
                 disabled={isLoading}
               />
               <button
