@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageCircle, Send, X, Bot, User } from 'lucide-react';
 
@@ -22,6 +21,60 @@ const ChatBot = () => {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const formatMessage = (text: string) => {
+    // Split by double line breaks for paragraphs
+    const paragraphs = text.split('\n\n');
+    
+    return paragraphs.map((paragraph, pIndex) => {
+      // Handle single line breaks within paragraphs
+      const lines = paragraph.split('\n');
+      
+      return (
+        <div key={pIndex} className={pIndex > 0 ? 'mt-3' : ''}>
+          {lines.map((line, lIndex) => {
+            // Handle bold text with **
+            const parts = line.split('**');
+            const formattedLine = parts.map((part, partIndex) => {
+              if (partIndex % 2 === 1) {
+                return <strong key={partIndex} className="font-bold">{part}</strong>;
+              }
+              return part;
+            });
+
+            // Handle bullet points (lines starting with - or *)
+            const isBulletPoint = line.trim().startsWith('- ') || line.trim().startsWith('* ');
+            
+            if (isBulletPoint) {
+              return (
+                <div key={lIndex} className="flex items-start space-x-2 ml-4">
+                  <span className="text-blue-500 font-bold">•</span>
+                  <span>{formattedLine}</span>
+                </div>
+              );
+            }
+
+            // Handle numbered lists (lines starting with numbers)
+            const numberedMatch = line.trim().match(/^(\d+)\.\s(.+)/);
+            if (numberedMatch) {
+              return (
+                <div key={lIndex} className="flex items-start space-x-2 ml-4">
+                  <span className="text-blue-600 font-semibold min-w-[20px]">{numberedMatch[1]}.</span>
+                  <span>{formattedLine}</span>
+                </div>
+              );
+            }
+
+            return (
+              <div key={lIndex} className={lIndex > 0 ? 'mt-1' : ''}>
+                {formattedLine}
+              </div>
+            );
+          })}
+        </div>
+      );
+    });
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -175,7 +228,9 @@ const ChatBot = () => {
                         : 'bg-white text-gray-800 border-gray-200 shadow-md'
                     }`}
                   >
-                    <p className="text-sm leading-relaxed font-medium">{message.text}</p>
+                    <div className="text-sm leading-relaxed font-medium">
+                      {message.isUser ? message.text : formatMessage(message.text)}
+                    </div>
                   </div>
                 </div>
               </div>
