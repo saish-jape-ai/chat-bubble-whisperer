@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageCircle, Send, X } from 'lucide-react';
+import { MessageCircle, Send, X, Bot, User } from 'lucide-react';
 
 interface Message {
   id: number;
@@ -115,54 +115,88 @@ const ChatBot = () => {
       {/* Floating Chat Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300 flex items-center justify-center z-50 ${isOpen ? 'hidden' : 'block'}`}
+        className={`fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-blue-500 via-blue-600 to-purple-700 rounded-full shadow-2xl hover:shadow-blue-500/25 transform hover:scale-110 transition-all duration-300 flex items-center justify-center z-50 ${isOpen ? 'hidden' : 'block'} ring-2 ring-white/20`}
       >
-        <MessageCircle className="w-6 h-6 text-white" />
+        <MessageCircle className="w-7 h-7 text-white" />
       </button>
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-96 h-[500px] bg-white rounded-lg shadow-2xl z-50 flex flex-col overflow-hidden">
+        <div className="fixed bottom-6 right-6 w-[420px] h-[580px] bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 flex flex-col overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 flex justify-between items-center">
-            <h3 className="font-semibold">Ask AI 🤖</h3>
+          <div className="bg-gradient-to-r from-blue-500 via-blue-600 to-purple-700 text-white p-5 flex justify-between items-center">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                <Bot className="w-5 h-5" />
+              </div>
+              <h3 className="font-semibold text-lg">Ask AI 🤖</h3>
+            </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="hover:bg-white/20 rounded-full p-1 transition-colors"
+              className="hover:bg-white/20 rounded-full p-2 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
+          <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-gray-50 to-white">
             {messages.map((message) => (
               <div
                 key={message.id}
-                className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
+                className={`flex items-start space-x-3 ${message.isUser ? 'flex-row-reverse space-x-reverse' : ''}`}
               >
-                <div
-                  className={`max-w-[80%] p-3 rounded-lg ${
-                    message.isUser
-                      ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
-                      : 'bg-white border shadow-sm'
-                  }`}
-                >
-                  <p className="text-sm">{message.text}</p>
+                {/* Avatar */}
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  message.isUser 
+                    ? 'bg-gradient-to-br from-emerald-400 to-emerald-600' 
+                    : 'bg-gradient-to-br from-blue-500 to-purple-600'
+                }`}>
+                  {message.isUser ? (
+                    <User className="w-4 h-4 text-white" />
+                  ) : (
+                    <Bot className="w-4 h-4 text-white" />
+                  )}
+                </div>
+
+                <div className={`flex flex-col max-w-[85%] ${message.isUser ? 'items-end' : 'items-start'}`}>
+                  {/* Sender Label */}
+                  <span className={`text-xs font-medium mb-1 ${
+                    message.isUser ? 'text-emerald-600' : 'text-blue-600'
+                  }`}>
+                    {message.isUser ? 'You' : 'AI'}
+                  </span>
+
+                  {/* Message Bubble */}
+                  <div
+                    className={`px-4 py-3 rounded-2xl shadow-sm border ${
+                      message.isUser
+                        ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white border-emerald-200'
+                        : 'bg-white text-gray-800 border-gray-200 shadow-md'
+                    }`}
+                  >
+                    <p className="text-sm leading-relaxed font-medium">{message.text}</p>
+                  </div>
                 </div>
               </div>
             ))}
             
             {isLoading && (
-              <div className="flex justify-start">
-                <div className="bg-white border shadow-sm p-3 rounded-lg">
-                  <div className="flex items-center space-x-2">
-                    <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+              <div className="flex items-start space-x-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                  <Bot className="w-4 h-4 text-white" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-xs font-medium text-blue-600 mb-1">AI</span>
+                  <div className="bg-white border border-gray-200 shadow-md px-4 py-3 rounded-2xl">
+                    <div className="flex items-center space-x-2">
+                      <div className="flex space-x-1">
+                        <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                        <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                      </div>
+                      <span className="text-sm text-gray-500 font-medium">AI is typing...</span>
                     </div>
-                    <span className="text-sm text-gray-500">AI is typing...</span>
                   </div>
                 </div>
               </div>
@@ -171,23 +205,25 @@ const ChatBot = () => {
           </div>
 
           {/* Input */}
-          <div className="p-4 border-t bg-white flex space-x-2">
-            <input
-              type="text"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Type your question..."
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-              disabled={isLoading}
-            />
-            <button
-              onClick={sendMessage}
-              disabled={isLoading || !inputValue.trim()}
-              className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-2 rounded-lg hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-            >
-              <Send className="w-5 h-5" />
-            </button>
+          <div className="p-5 border-t border-gray-100 bg-white">
+            <div className="flex space-x-3">
+              <input
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="Type your question..."
+                className="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm font-medium placeholder-gray-400 shadow-sm"
+                disabled={isLoading}
+              />
+              <button
+                onClick={sendMessage}
+                disabled={isLoading || !inputValue.trim()}
+                className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-3 rounded-xl hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+              >
+                <Send className="w-5 h-5" />
+              </button>
+            </div>
           </div>
         </div>
       )}
