@@ -33,6 +33,9 @@ const ChatBot = () => {
       return (
         <div key={pIndex} className={pIndex > 0 ? 'mt-3' : ''}>
           {lines.map((line, lIndex) => {
+            // Skip empty lines
+            if (!line.trim()) return null;
+
             // Handle bold text with **
             const parts = line.split('**');
             const formattedLine = parts.map((part, partIndex) => {
@@ -46,21 +49,23 @@ const ChatBot = () => {
             const isBulletPoint = line.trim().startsWith('- ') || line.trim().startsWith('* ');
             
             if (isBulletPoint) {
+              const bulletText = line.trim().substring(2); // Remove the "- " or "* "
               return (
                 <div key={lIndex} className="flex items-start space-x-2 ml-4">
-                  <span className="text-blue-500 font-bold">•</span>
-                  <span>{formattedLine}</span>
+                  <span className="text-blue-500 font-bold mt-0.5">•</span>
+                  <span>{bulletText}</span>
                 </div>
               );
             }
 
             // Handle numbered lists (lines starting with numbers)
-            const numberedMatch = line.trim().match(/^(\d+)\.\s(.+)/);
+            const numberedMatch = line.trim().match(/^(\d+)\.\s*(.+)/);
             if (numberedMatch) {
+              const [, number, content] = numberedMatch;
               return (
                 <div key={lIndex} className="flex items-start space-x-2 ml-4">
-                  <span className="text-blue-600 font-semibold min-w-[20px]">{numberedMatch[1]}.</span>
-                  <span>{formattedLine}</span>
+                  <span className="text-blue-600 font-semibold min-w-[20px] mt-0.5">{number}.</span>
+                  <span>{content}</span>
                 </div>
               );
             }
