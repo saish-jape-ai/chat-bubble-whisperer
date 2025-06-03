@@ -3,7 +3,7 @@ import ChatBot from "./components/ChatBot";
 
 const App = () => {
   return (
-    <div className="min-h-screen">
+    <div style={{ background: 'transparent' }}>
       <ChatBot />
     </div>
   );
