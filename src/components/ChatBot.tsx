@@ -34,7 +34,9 @@ const ChatBot = () => {
       button: 'bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700',
       userBubble: 'bg-gradient-to-br from-emerald-500 to-teal-600 border-emerald-200',
       accent: 'text-emerald-600',
-      dots: ['bg-emerald-400', 'bg-teal-400', 'bg-green-400']
+      dots: ['bg-emerald-400', 'bg-teal-400', 'bg-green-400'],
+      focusRing: 'focus:ring-emerald-500 focus:border-emerald-500',
+      themeButton: 'bg-gradient-to-r from-emerald-500 to-teal-600'
     },
     ocean: {
       primary: 'from-blue-500 via-cyan-500 to-teal-600',
@@ -42,7 +44,9 @@ const ChatBot = () => {
       button: 'bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700',
       userBubble: 'bg-gradient-to-br from-blue-500 to-cyan-600 border-blue-200',
       accent: 'text-blue-600',
-      dots: ['bg-blue-400', 'bg-cyan-400', 'bg-teal-400']
+      dots: ['bg-blue-400', 'bg-cyan-400', 'bg-teal-400'],
+      focusRing: 'focus:ring-blue-500 focus:border-blue-500',
+      themeButton: 'bg-gradient-to-r from-blue-500 to-cyan-600'
     },
     sunset: {
       primary: 'from-orange-500 via-pink-500 to-purple-600',
@@ -50,7 +54,9 @@ const ChatBot = () => {
       button: 'bg-gradient-to-r from-orange-500 to-pink-600 hover:from-orange-600 hover:to-pink-700',
       userBubble: 'bg-gradient-to-br from-orange-500 to-pink-600 border-orange-200',
       accent: 'text-orange-600',
-      dots: ['bg-orange-400', 'bg-pink-400', 'bg-purple-400']
+      dots: ['bg-orange-400', 'bg-pink-400', 'bg-purple-400'],
+      focusRing: 'focus:ring-orange-500 focus:border-orange-500',
+      themeButton: 'bg-gradient-to-r from-orange-500 to-pink-600'
     },
     royal: {
       primary: 'from-purple-500 via-indigo-500 to-blue-600',
@@ -58,7 +64,9 @@ const ChatBot = () => {
       button: 'bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700',
       userBubble: 'bg-gradient-to-br from-purple-500 to-indigo-600 border-purple-200',
       accent: 'text-purple-600',
-      dots: ['bg-purple-400', 'bg-indigo-400', 'bg-blue-400']
+      dots: ['bg-purple-400', 'bg-indigo-400', 'bg-blue-400'],
+      focusRing: 'focus:ring-purple-500 focus:border-purple-500',
+      themeButton: 'bg-gradient-to-r from-purple-500 to-indigo-600'
     },
     crimson: {
       primary: 'from-red-500 via-rose-500 to-pink-600',
@@ -66,7 +74,9 @@ const ChatBot = () => {
       button: 'bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700',
       userBubble: 'bg-gradient-to-br from-red-500 to-rose-600 border-red-200',
       accent: 'text-red-600',
-      dots: ['bg-red-400', 'bg-rose-400', 'bg-pink-400']
+      dots: ['bg-red-400', 'bg-rose-400', 'bg-pink-400'],
+      focusRing: 'focus:ring-red-500 focus:border-red-500',
+      themeButton: 'bg-gradient-to-r from-red-500 to-rose-600'
     },
     forest: {
       primary: 'from-green-600 via-emerald-600 to-teal-700',
@@ -74,7 +84,9 @@ const ChatBot = () => {
       button: 'bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800',
       userBubble: 'bg-gradient-to-br from-green-600 to-emerald-700 border-green-200',
       accent: 'text-green-700',
-      dots: ['bg-green-500', 'bg-emerald-500', 'bg-teal-500']
+      dots: ['bg-green-500', 'bg-emerald-500', 'bg-teal-500'],
+      focusRing: 'focus:ring-green-600 focus:border-green-600',
+      themeButton: 'bg-gradient-to-r from-green-600 to-emerald-700'
     },
     slate: {
       primary: 'from-slate-500 via-gray-500 to-zinc-600',
@@ -82,7 +94,9 @@ const ChatBot = () => {
       button: 'bg-gradient-to-r from-slate-500 to-gray-600 hover:from-slate-600 hover:to-gray-700',
       userBubble: 'bg-gradient-to-br from-slate-500 to-gray-600 border-slate-200',
       accent: 'text-slate-600',
-      dots: ['bg-slate-400', 'bg-gray-400', 'bg-zinc-400']
+      dots: ['bg-slate-400', 'bg-gray-400', 'bg-zinc-400'],
+      focusRing: 'focus:ring-slate-500 focus:border-slate-500',
+      themeButton: 'bg-gradient-to-r from-slate-500 to-gray-600'
     },
     amber: {
       primary: 'from-amber-500 via-yellow-500 to-orange-600',
@@ -90,7 +104,9 @@ const ChatBot = () => {
       button: 'bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700',
       userBubble: 'bg-gradient-to-br from-amber-500 to-yellow-600 border-amber-200',
       accent: 'text-amber-600',
-      dots: ['bg-amber-400', 'bg-yellow-400', 'bg-orange-400']
+      dots: ['bg-amber-400', 'bg-yellow-400', 'bg-orange-400'],
+      focusRing: 'focus:ring-amber-500 focus:border-amber-500',
+      themeButton: 'bg-gradient-to-r from-amber-500 to-yellow-600'
     },
     midnight: {
       primary: 'from-gray-800 via-slate-800 to-zinc-900',
@@ -98,7 +114,9 @@ const ChatBot = () => {
       button: 'bg-gradient-to-r from-gray-800 to-slate-900 hover:from-gray-900 hover:to-slate-900',
       userBubble: 'bg-gradient-to-br from-gray-800 to-slate-900 border-gray-200',
       accent: 'text-gray-700',
-      dots: ['bg-gray-600', 'bg-slate-600', 'bg-zinc-600']
+      dots: ['bg-gray-600', 'bg-slate-600', 'bg-zinc-600'],
+      focusRing: 'focus:ring-gray-800 focus:border-gray-800',
+      themeButton: 'bg-gradient-to-r from-gray-800 to-slate-900'
     },
     lavender: {
       primary: 'from-violet-400 via-purple-400 to-indigo-500',
@@ -106,7 +124,9 @@ const ChatBot = () => {
       button: 'bg-gradient-to-r from-violet-400 to-purple-500 hover:from-violet-500 hover:to-purple-600',
       userBubble: 'bg-gradient-to-br from-violet-400 to-purple-500 border-violet-200',
       accent: 'text-violet-600',
-      dots: ['bg-violet-400', 'bg-purple-400', 'bg-indigo-400']
+      dots: ['bg-violet-400', 'bg-purple-400', 'bg-indigo-400'],
+      focusRing: 'focus:ring-violet-400 focus:border-violet-400',
+      themeButton: 'bg-gradient-to-r from-violet-400 to-purple-500'
     },
     mint: {
       primary: 'from-green-300 via-emerald-400 to-teal-500',
@@ -114,7 +134,9 @@ const ChatBot = () => {
       button: 'bg-gradient-to-r from-green-300 to-emerald-500 hover:from-green-400 hover:to-emerald-600',
       userBubble: 'bg-gradient-to-br from-green-300 to-emerald-500 border-green-200',
       accent: 'text-green-600',
-      dots: ['bg-green-300', 'bg-emerald-300', 'bg-teal-300']
+      dots: ['bg-green-300', 'bg-emerald-300', 'bg-teal-300'],
+      focusRing: 'focus:ring-green-300 focus:border-green-300',
+      themeButton: 'bg-gradient-to-r from-green-300 to-emerald-500'
     },
     coral: {
       primary: 'from-pink-400 via-rose-400 to-red-500',
@@ -122,7 +144,49 @@ const ChatBot = () => {
       button: 'bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600',
       userBubble: 'bg-gradient-to-br from-pink-400 to-rose-500 border-pink-200',
       accent: 'text-pink-600',
-      dots: ['bg-pink-400', 'bg-rose-400', 'bg-red-400']
+      dots: ['bg-pink-400', 'bg-rose-400', 'bg-red-400'],
+      focusRing: 'focus:ring-pink-400 focus:border-pink-400',
+      themeButton: 'bg-gradient-to-r from-pink-400 to-rose-500'
+    },
+    neon: {
+      primary: 'from-lime-400 via-green-400 to-emerald-500',
+      secondary: 'from-lime-50 to-green-50',
+      button: 'bg-gradient-to-r from-lime-400 to-green-500 hover:from-lime-500 hover:to-green-600',
+      userBubble: 'bg-gradient-to-br from-lime-400 to-green-500 border-lime-200',
+      accent: 'text-lime-600',
+      dots: ['bg-lime-400', 'bg-green-400', 'bg-emerald-400'],
+      focusRing: 'focus:ring-lime-400 focus:border-lime-400',
+      themeButton: 'bg-gradient-to-r from-lime-400 to-green-500'
+    },
+    tropical: {
+      primary: 'from-cyan-400 via-turquoise-400 to-blue-500',
+      secondary: 'from-cyan-50 to-blue-50',
+      button: 'bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600',
+      userBubble: 'bg-gradient-to-br from-cyan-400 to-blue-500 border-cyan-200',
+      accent: 'text-cyan-600',
+      dots: ['bg-cyan-400', 'bg-blue-400', 'bg-teal-400'],
+      focusRing: 'focus:ring-cyan-400 focus:border-cyan-400',
+      themeButton: 'bg-gradient-to-r from-cyan-400 to-blue-500'
+    },
+    galaxy: {
+      primary: 'from-indigo-600 via-purple-600 to-pink-600',
+      secondary: 'from-indigo-50 to-purple-50',
+      button: 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700',
+      userBubble: 'bg-gradient-to-br from-indigo-600 to-purple-600 border-indigo-200',
+      accent: 'text-indigo-600',
+      dots: ['bg-indigo-500', 'bg-purple-500', 'bg-pink-500'],
+      focusRing: 'focus:ring-indigo-600 focus:border-indigo-600',
+      themeButton: 'bg-gradient-to-r from-indigo-600 to-purple-600'
+    },
+    aurora: {
+      primary: 'from-teal-400 via-blue-500 to-purple-600',
+      secondary: 'from-teal-50 to-blue-50',
+      button: 'bg-gradient-to-r from-teal-400 to-purple-600 hover:from-teal-500 hover:to-purple-700',
+      userBubble: 'bg-gradient-to-br from-teal-400 to-purple-600 border-teal-200',
+      accent: 'text-teal-600',
+      dots: ['bg-teal-400', 'bg-blue-400', 'bg-purple-400'],
+      focusRing: 'focus:ring-teal-400 focus:border-teal-400',
+      themeButton: 'bg-gradient-to-r from-teal-400 to-purple-600'
     }
   };
 
@@ -263,27 +327,39 @@ const ChatBot = () => {
       }
 
       const data = await response.json();
-
-      // Try to parse JSON response if it's structured
       let botResponse = data.answer;
       let buttons = false;
       let buttonType = null;
       let buttonData = null;
 
-      try {
-        // Check if the response contains JSON structure
-        const jsonMatch = botResponse.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          const parsedData = JSON.parse(jsonMatch[0]);
-          if (parsedData.response) {
-            botResponse = parsedData.response;
-            buttons = parsedData.buttons || false;
-            buttonType = parsedData.button_type || null;
-            buttonData = parsedData.button_data || null;
+      // Clean up the response to extract JSON if present
+      const cleanResponse = botResponse.replace(/✅ Example Output:\s*/g, '')
+                                     .replace(/OR \(.*?\):\s*/g, '')
+                                     .trim();
+
+      // Try to find and parse JSON in the response
+      const jsonMatches = cleanResponse.match(/\{[\s\S]*?\}/g);
+      
+      if (jsonMatches && jsonMatches.length > 0) {
+        try {
+          // Use the first valid JSON found
+          for (const jsonMatch of jsonMatches) {
+            try {
+              const parsedData = JSON.parse(jsonMatch);
+              if (parsedData.response) {
+                botResponse = parsedData.response;
+                buttons = parsedData.buttons || false;
+                buttonType = parsedData.button_type || null;
+                buttonData = parsedData.button_data || null;
+                break;
+              }
+            } catch (e) {
+              continue;
+            }
           }
+        } catch (parseError) {
+          console.log('Could not parse JSON from response');
         }
-      } catch (parseError) {
-        console.log('Response is not JSON formatted, using as plain text');
       }
 
       const botMessage: Message = {
@@ -343,7 +419,7 @@ const ChatBot = () => {
         <MessageCircle className="w-7 h-7 text-white" />
       </button>
 
-      {/* Chat Window - Comfortable size */}
+      {/* Chat Window */}
       {isOpen && (
         <div className="fixed bottom-6 right-6 w-[420px] h-[600px] bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 flex flex-col overflow-hidden">
           {/* Enhanced Header */}
@@ -378,19 +454,22 @@ const ChatBot = () => {
             <div className="p-4 border-b border-gray-100 bg-gray-50 max-h-32 overflow-y-auto">
               <p className="text-sm font-medium text-gray-700 mb-2">Choose Theme:</p>
               <div className="grid grid-cols-3 gap-2">
-                {Object.keys(themes).map((themeName) => (
-                  <button
-                    key={themeName}
-                    onClick={() => setTheme(themeName)}
-                    className={`px-2 py-1 rounded-full text-xs font-medium capitalize transition-colors ${
-                      theme === themeName 
-                        ? 'bg-emerald-100 text-emerald-700 border border-emerald-300' 
-                        : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-                    }`}
-                  >
-                    {themeName}
-                  </button>
-                ))}
+                {Object.keys(themes).map((themeName) => {
+                  const themeData = themes[themeName as keyof typeof themes];
+                  return (
+                    <button
+                      key={themeName}
+                      onClick={() => setTheme(themeName)}
+                      className={`px-2 py-1 rounded-full text-xs font-medium capitalize transition-colors text-white ${
+                        theme === themeName 
+                          ? `${themeData.themeButton} ring-2 ring-gray-400` 
+                          : `${themeData.themeButton} opacity-70 hover:opacity-100`
+                      }`}
+                    >
+                      {themeName}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -497,7 +576,7 @@ const ChatBot = () => {
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Type your question..."
-                className="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm font-medium placeholder-gray-400 shadow-sm"
+                className={`flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 ${currentTheme.focusRing} text-sm font-medium placeholder-gray-400 shadow-sm`}
                 disabled={isLoading}
               />
               <button
