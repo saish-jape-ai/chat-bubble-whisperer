@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageCircle, Send, X, Bot, User, Clock, Linkedin, Mail, Phone, Globe, Settings, Palette } from 'lucide-react';
+import { MessageCircle, Send, X, Bot, User, Settings, Palette } from 'lucide-react';
 
 interface Message {
   id: number;
@@ -49,6 +49,46 @@ const ChatBot = () => {
       userBubble: 'bg-gradient-to-br from-orange-500 to-pink-600 border-orange-200',
       accent: 'text-orange-600',
       dots: ['bg-orange-400', 'bg-pink-400', 'bg-purple-400']
+    },
+    royal: {
+      primary: 'from-purple-500 via-indigo-500 to-blue-600',
+      secondary: 'from-purple-50 to-indigo-50',
+      button: 'bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700',
+      userBubble: 'bg-gradient-to-br from-purple-500 to-indigo-600 border-purple-200',
+      accent: 'text-purple-600',
+      dots: ['bg-purple-400', 'bg-indigo-400', 'bg-blue-400']
+    },
+    crimson: {
+      primary: 'from-red-500 via-rose-500 to-pink-600',
+      secondary: 'from-red-50 to-rose-50',
+      button: 'bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700',
+      userBubble: 'bg-gradient-to-br from-red-500 to-rose-600 border-red-200',
+      accent: 'text-red-600',
+      dots: ['bg-red-400', 'bg-rose-400', 'bg-pink-400']
+    },
+    forest: {
+      primary: 'from-green-600 via-emerald-600 to-teal-700',
+      secondary: 'from-green-50 to-emerald-50',
+      button: 'bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800',
+      userBubble: 'bg-gradient-to-br from-green-600 to-emerald-700 border-green-200',
+      accent: 'text-green-700',
+      dots: ['bg-green-500', 'bg-emerald-500', 'bg-teal-500']
+    },
+    slate: {
+      primary: 'from-slate-500 via-gray-500 to-zinc-600',
+      secondary: 'from-slate-50 to-gray-50',
+      button: 'bg-gradient-to-r from-slate-500 to-gray-600 hover:from-slate-600 hover:to-gray-700',
+      userBubble: 'bg-gradient-to-br from-slate-500 to-gray-600 border-slate-200',
+      accent: 'text-slate-600',
+      dots: ['bg-slate-400', 'bg-gray-400', 'bg-zinc-400']
+    },
+    amber: {
+      primary: 'from-amber-500 via-yellow-500 to-orange-600',
+      secondary: 'from-amber-50 to-yellow-50',
+      button: 'bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700',
+      userBubble: 'bg-gradient-to-br from-amber-500 to-yellow-600 border-amber-200',
+      accent: 'text-amber-600',
+      dots: ['bg-amber-400', 'bg-yellow-400', 'bg-orange-400']
     }
   };
 
@@ -198,13 +238,6 @@ const ChatBot = () => {
     }
   };
 
-  const socialLinks = [
-    { icon: Linkedin, url: '#', label: 'LinkedIn' },
-    { icon: Mail, url: 'mailto:contact@example.com', label: 'Email' },
-    { icon: Phone, url: 'tel:+1234567890', label: 'Phone' },
-    { icon: Globe, url: '#', label: 'Website' }
-  ];
-
   return (
     <>
       {/* Floating Chat Button */}
@@ -215,9 +248,9 @@ const ChatBot = () => {
         <MessageCircle className="w-7 h-7 text-white" />
       </button>
 
-      {/* Chat Window */}
+      {/* Chat Window - Larger size */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-[450px] h-[650px] bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 flex flex-col overflow-hidden">
+        <div className="fixed bottom-6 right-6 w-[550px] h-[750px] bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 flex flex-col overflow-hidden">
           {/* Enhanced Header */}
           <div className={`bg-gradient-to-r ${currentTheme.primary} text-white p-5 flex justify-between items-center`}>
             <div className="flex items-center space-x-3">
@@ -247,14 +280,14 @@ const ChatBot = () => {
 
           {/* Theme Selector */}
           {showSettings && (
-            <div className="p-4 border-b border-gray-100 bg-gray-50">
+            <div className="p-4 border-b border-gray-100 bg-gray-50 max-h-32 overflow-y-auto">
               <p className="text-sm font-medium text-gray-700 mb-2">Choose Theme:</p>
-              <div className="flex space-x-2">
+              <div className="grid grid-cols-4 gap-2">
                 {Object.keys(themes).map((themeName) => (
                   <button
                     key={themeName}
                     onClick={() => setTheme(themeName)}
-                    className={`px-3 py-1 rounded-full text-xs font-medium capitalize transition-colors ${
+                    className={`px-2 py-1 rounded-full text-xs font-medium capitalize transition-colors ${
                       theme === themeName 
                         ? 'bg-emerald-100 text-emerald-700 border border-emerald-300' 
                         : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
@@ -267,100 +300,84 @@ const ChatBot = () => {
             </div>
           )}
 
-          {/* Social Links Bar */}
-          <div className="flex justify-center space-x-4 p-3 bg-gray-50 border-b border-gray-100">
-            {socialLinks.map((link, index) => (
-              <a
-                key={index}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`w-8 h-8 ${currentTheme.button} rounded-full flex items-center justify-center transition-all transform hover:scale-110 shadow-md`}
-                title={link.label}
-              >
-                <link.icon className="w-4 h-4 text-white" />
-              </a>
-            ))}
-          </div>
-
           {/* Messages */}
           <div className={`flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b ${currentTheme.secondary}`}>
             {messages.map((message) => (
               <div
                 key={message.id}
-                className={`flex items-start space-x-3 ${message.isUser ? 'flex-row-reverse space-x-reverse' : ''}`}
+                className={`flex flex-col space-y-1 ${message.isUser ? 'items-end' : 'items-start'}`}
               >
-                {/* Avatar */}
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                  message.isUser 
-                    ? currentTheme.userBubble.replace('bg-gradient-to-br', 'bg-gradient-to-br')
-                    : `bg-gradient-to-br ${currentTheme.primary}`
-                }`}>
-                  {message.isUser ? (
-                    <User className="w-4 h-4 text-white" />
-                  ) : (
-                    <Bot className="w-4 h-4 text-white" />
-                  )}
-                </div>
+                <div className={`flex items-start space-x-3 ${message.isUser ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                  {/* Avatar */}
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                    message.isUser 
+                      ? currentTheme.userBubble.replace('bg-gradient-to-br', 'bg-gradient-to-br')
+                      : `bg-gradient-to-br ${currentTheme.primary}`
+                  }`}>
+                    {message.isUser ? (
+                      <User className="w-4 h-4 text-white" />
+                    ) : (
+                      <Bot className="w-4 h-4 text-white" />
+                    )}
+                  </div>
 
-                <div className={`flex flex-col max-w-[85%] ${message.isUser ? 'items-end' : 'items-start'}`}>
-                  {/* Sender Label with Time */}
-                  <div className={`flex items-center space-x-2 mb-1 ${message.isUser ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                    <span className={`text-xs font-medium ${currentTheme.accent}`}>
+                  <div className={`flex flex-col max-w-[85%] ${message.isUser ? 'items-end' : 'items-start'}`}>
+                    {/* Sender Label */}
+                    <span className={`text-xs font-medium ${currentTheme.accent} mb-1`}>
                       {message.isUser ? 'You' : 'AI'}
                     </span>
-                    <div className="flex items-center text-xs text-gray-400">
-                      <Clock className="w-3 h-3 mr-1" />
-                      {formatTime(message.timestamp)}
-                    </div>
-                  </div>
 
-                  {/* Message Bubble */}
-                  <div
-                    className={`px-4 py-3 rounded-2xl shadow-sm border ${
-                      message.isUser
-                        ? `${currentTheme.userBubble} text-white`
-                        : 'bg-white text-gray-800 border-gray-200 shadow-md'
-                    }`}
-                  >
-                    <div className="text-sm leading-relaxed font-medium">
-                      {message.isUser ? message.text : formatMessage(message.text)}
+                    {/* Message Bubble */}
+                    <div
+                      className={`px-4 py-3 rounded-2xl shadow-sm border ${
+                        message.isUser
+                          ? `${currentTheme.userBubble} text-white`
+                          : 'bg-white text-gray-800 border-gray-200 shadow-md'
+                      }`}
+                    >
+                      <div className="text-sm leading-relaxed font-medium">
+                        {message.isUser ? message.text : formatMessage(message.text)}
+                      </div>
                     </div>
                   </div>
+                </div>
+                
+                {/* Time below message */}
+                <div className={`text-xs text-gray-400 ${message.isUser ? 'mr-11' : 'ml-11'}`}>
+                  {formatTime(message.timestamp)}
                 </div>
               </div>
             ))}
             
             {isLoading && (
-              <div className="flex items-start space-x-3">
-                <div className={`w-8 h-8 bg-gradient-to-br ${currentTheme.primary} rounded-full flex items-center justify-center`}>
-                  <Bot className="w-4 h-4 text-white" />
-                </div>
-                <div className="flex flex-col">
-                  <div className="flex items-center space-x-2 mb-1">
-                    <span className={`text-xs font-medium ${currentTheme.accent}`}>AI</span>
-                    <div className="flex items-center text-xs text-gray-400">
-                      <Clock className="w-3 h-3 mr-1" />
-                      {formatTime(new Date())}
-                    </div>
+              <div className="flex flex-col space-y-1 items-start">
+                <div className="flex items-start space-x-3">
+                  <div className={`w-8 h-8 bg-gradient-to-br ${currentTheme.primary} rounded-full flex items-center justify-center`}>
+                    <Bot className="w-4 h-4 text-white" />
                   </div>
-                  <div className="bg-white border border-gray-200 shadow-md px-4 py-3 rounded-2xl">
-                    <div className="flex items-center space-x-2">
-                      <div className="flex space-x-1">
-                        <div className={`w-2 h-2 ${currentTheme.dots[0]} rounded-full animate-bounce`}></div>
-                        <div className={`w-2 h-2 ${currentTheme.dots[1]} rounded-full animate-bounce`} style={{ animationDelay: '0.1s' }}></div>
-                        <div className={`w-2 h-2 ${currentTheme.dots[2]} rounded-full animate-bounce`} style={{ animationDelay: '0.2s' }}></div>
+                  <div className="flex flex-col">
+                    <span className={`text-xs font-medium ${currentTheme.accent} mb-1`}>AI</span>
+                    <div className="bg-white border border-gray-200 shadow-md px-4 py-3 rounded-2xl">
+                      <div className="flex items-center space-x-2">
+                        <div className="flex space-x-1">
+                          <div className={`w-2 h-2 ${currentTheme.dots[0]} rounded-full animate-bounce`}></div>
+                          <div className={`w-2 h-2 ${currentTheme.dots[1]} rounded-full animate-bounce`} style={{ animationDelay: '0.1s' }}></div>
+                          <div className={`w-2 h-2 ${currentTheme.dots[2]} rounded-full animate-bounce`} style={{ animationDelay: '0.2s' }}></div>
+                        </div>
+                        <span className="text-sm text-gray-500 font-medium">AI is typing...</span>
                       </div>
-                      <span className="text-sm text-gray-500 font-medium">AI is typing...</span>
                     </div>
                   </div>
+                </div>
+                <div className="text-xs text-gray-400 ml-11">
+                  {formatTime(new Date())}
                 </div>
               </div>
             )}
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Enhanced Input */}
+          {/* Enhanced Input - Removed helper text */}
           <div className="p-5 border-t border-gray-100 bg-white">
             <div className="flex space-x-3">
               <input
@@ -379,10 +396,6 @@ const ChatBot = () => {
               >
                 <Send className="w-5 h-5" />
               </button>
-            </div>
-            <div className="flex justify-between items-center mt-2 text-xs text-gray-400">
-              <span>Press Enter to send</span>
-              <span>{inputValue.length}/500</span>
             </div>
           </div>
         </div>
