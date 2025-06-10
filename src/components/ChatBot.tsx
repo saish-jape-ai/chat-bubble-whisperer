@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageCircle, Send, X, Bot, User, Settings, Palette } from 'lucide-react';
 
@@ -248,9 +247,9 @@ const ChatBot = () => {
         <MessageCircle className="w-7 h-7 text-white" />
       </button>
 
-      {/* Chat Window - Larger size */}
+      {/* Chat Window - Comfortable size */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-[550px] h-[750px] bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 flex flex-col overflow-hidden">
+        <div className="fixed bottom-6 right-6 w-[420px] h-[600px] bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 flex flex-col overflow-hidden">
           {/* Enhanced Header */}
           <div className={`bg-gradient-to-r ${currentTheme.primary} text-white p-5 flex justify-between items-center`}>
             <div className="flex items-center space-x-3">
@@ -377,7 +376,7 @@ const ChatBot = () => {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Enhanced Input - Removed helper text */}
+          {/* Enhanced Input */}
           <div className="p-5 border-t border-gray-100 bg-white">
             <div className="flex space-x-3">
               <input
