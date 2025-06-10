@@ -1,11 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageCircle, Send, X, Bot, User, Settings, Palette } from 'lucide-react';
+import { MessageCircle, Send, X, Bot, User, Settings, Palette, Mail, Linkedin, Phone, Globe } from 'lucide-react';
 
 interface Message {
   id: number;
   text: string;
   isUser: boolean;
   timestamp: Date;
+  buttons?: boolean;
+  buttonType?: string[];
+  buttonData?: string[];
 }
 
 const ChatBot = () => {
@@ -88,6 +91,38 @@ const ChatBot = () => {
       userBubble: 'bg-gradient-to-br from-amber-500 to-yellow-600 border-amber-200',
       accent: 'text-amber-600',
       dots: ['bg-amber-400', 'bg-yellow-400', 'bg-orange-400']
+    },
+    midnight: {
+      primary: 'from-gray-800 via-slate-800 to-zinc-900',
+      secondary: 'from-gray-50 to-slate-50',
+      button: 'bg-gradient-to-r from-gray-800 to-slate-900 hover:from-gray-900 hover:to-slate-900',
+      userBubble: 'bg-gradient-to-br from-gray-800 to-slate-900 border-gray-200',
+      accent: 'text-gray-700',
+      dots: ['bg-gray-600', 'bg-slate-600', 'bg-zinc-600']
+    },
+    lavender: {
+      primary: 'from-violet-400 via-purple-400 to-indigo-500',
+      secondary: 'from-violet-50 to-purple-50',
+      button: 'bg-gradient-to-r from-violet-400 to-purple-500 hover:from-violet-500 hover:to-purple-600',
+      userBubble: 'bg-gradient-to-br from-violet-400 to-purple-500 border-violet-200',
+      accent: 'text-violet-600',
+      dots: ['bg-violet-400', 'bg-purple-400', 'bg-indigo-400']
+    },
+    mint: {
+      primary: 'from-green-300 via-emerald-400 to-teal-500',
+      secondary: 'from-green-50 to-emerald-50',
+      button: 'bg-gradient-to-r from-green-300 to-emerald-500 hover:from-green-400 hover:to-emerald-600',
+      userBubble: 'bg-gradient-to-br from-green-300 to-emerald-500 border-green-200',
+      accent: 'text-green-600',
+      dots: ['bg-green-300', 'bg-emerald-300', 'bg-teal-300']
+    },
+    coral: {
+      primary: 'from-pink-400 via-rose-400 to-red-500',
+      secondary: 'from-pink-50 to-rose-50',
+      button: 'bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600',
+      userBubble: 'bg-gradient-to-br from-pink-400 to-rose-500 border-pink-200',
+      accent: 'text-pink-600',
+      dots: ['bg-pink-400', 'bg-rose-400', 'bg-red-400']
     }
   };
 
@@ -160,6 +195,42 @@ const ChatBot = () => {
     scrollToBottom();
   }, [messages]);
 
+  const getButtonIcon = (type: string) => {
+    switch (type.toLowerCase()) {
+      case 'email':
+        return <Mail className="w-4 h-4" />;
+      case 'linkedin':
+        return <Linkedin className="w-4 h-4" />;
+      case 'phone':
+        return <Phone className="w-4 h-4" />;
+      case 'website':
+      case 'url':
+        return <Globe className="w-4 h-4" />;
+      default:
+        return <Globe className="w-4 h-4" />;
+    }
+  };
+
+  const handleButtonClick = (type: string, data: string) => {
+    switch (type.toLowerCase()) {
+      case 'email':
+        window.open(`mailto:${data}`, '_blank');
+        break;
+      case 'linkedin':
+        window.open(data, '_blank');
+        break;
+      case 'phone':
+        window.open(`tel:${data}`, '_blank');
+        break;
+      case 'website':
+      case 'url':
+        window.open(data, '_blank');
+        break;
+      default:
+        window.open(data, '_blank');
+    }
+  };
+
   const sendMessage = async () => {
     if (!inputValue.trim() || isLoading) return;
 
@@ -193,11 +264,36 @@ const ChatBot = () => {
 
       const data = await response.json();
 
+      // Try to parse JSON response if it's structured
+      let botResponse = data.answer;
+      let buttons = false;
+      let buttonType = null;
+      let buttonData = null;
+
+      try {
+        // Check if the response contains JSON structure
+        const jsonMatch = botResponse.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const parsedData = JSON.parse(jsonMatch[0]);
+          if (parsedData.response) {
+            botResponse = parsedData.response;
+            buttons = parsedData.buttons || false;
+            buttonType = parsedData.button_type || null;
+            buttonData = parsedData.button_data || null;
+          }
+        }
+      } catch (parseError) {
+        console.log('Response is not JSON formatted, using as plain text');
+      }
+
       const botMessage: Message = {
         id: messages.length + 2,
-        text: data.answer,
+        text: botResponse,
         isUser: false,
-        timestamp: new Date()
+        timestamp: new Date(),
+        buttons,
+        buttonType,
+        buttonData
       };
 
       setMessages(prev => [...prev, botMessage]);
@@ -281,7 +377,7 @@ const ChatBot = () => {
           {showSettings && (
             <div className="p-4 border-b border-gray-100 bg-gray-50 max-h-32 overflow-y-auto">
               <p className="text-sm font-medium text-gray-700 mb-2">Choose Theme:</p>
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-3 gap-2">
                 {Object.keys(themes).map((themeName) => (
                   <button
                     key={themeName}
@@ -338,6 +434,22 @@ const ChatBot = () => {
                         {message.isUser ? message.text : formatMessage(message.text)}
                       </div>
                     </div>
+
+                    {/* Action Buttons */}
+                    {!message.isUser && message.buttons && message.buttonType && message.buttonData && (
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {message.buttonType.map((type, index) => (
+                          <button
+                            key={index}
+                            onClick={() => handleButtonClick(type, message.buttonData![index])}
+                            className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${currentTheme.button} text-white hover:scale-105 transform`}
+                          >
+                            {getButtonIcon(type)}
+                            <span className="capitalize">{type}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
                 
