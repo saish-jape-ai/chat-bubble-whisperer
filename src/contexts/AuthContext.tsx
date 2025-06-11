@@ -49,6 +49,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       formData.append('username', email);
       formData.append('password', password);
 
+      console.log('Attempting login for:', email);
+
       const response = await fetch('http://127.0.0.1:8000/api/login', {
         method: 'POST',
         headers: {
@@ -59,13 +61,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (response.ok) {
         const data = await response.json();
+        console.log('Login successful, received data:', data);
+        
         setToken(data.access_token);
         setUser(data.user);
         localStorage.setItem('auth_token', data.access_token);
         localStorage.setItem('auth_user', JSON.stringify(data.user));
         return true;
+      } else {
+        const errorText = await response.text();
+        console.error('Login failed:', response.status, errorText);
+        return false;
       }
-      return false;
     } catch (error) {
       console.error('Login error:', error);
       return false;
@@ -77,6 +84,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signup = async (email: string, username: string, password: string): Promise<boolean> => {
     try {
       setIsLoading(true);
+      console.log('Attempting signup for:', email, username);
+
       const response = await fetch('http://127.0.0.1:8000/api/signup', {
         method: 'POST',
         headers: {
@@ -87,13 +96,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (response.ok) {
         const data = await response.json();
+        console.log('Signup successful, received data:', data);
+        
         setToken(data.access_token);
         setUser({ id: data.id, username: data.username, email: data.email });
         localStorage.setItem('auth_token', data.access_token);
         localStorage.setItem('auth_user', JSON.stringify({ id: data.id, username: data.username, email: data.email }));
         return true;
+      } else {
+        const errorText = await response.text();
+        console.error('Signup failed:', response.status, errorText);
+        return false;
       }
-      return false;
     } catch (error) {
       console.error('Signup error:', error);
       return false;
@@ -103,6 +117,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
+    console.log('Logging out user');
     setUser(null);
     setToken(null);
     localStorage.removeItem('auth_token');

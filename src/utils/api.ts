@@ -16,6 +16,8 @@ export const apiCall = async (endpoint: string, options: RequestInit = {}) => {
   });
 
   if (!response.ok) {
+    const errorText = await response.text();
+    console.error(`API Error: ${response.status} - ${errorText}`);
     throw new Error(`API Error: ${response.status}`);
   }
 
@@ -36,6 +38,8 @@ export const uploadFile = async (file: File) => {
   });
 
   if (!response.ok) {
+    const errorText = await response.text();
+    console.error(`Upload Error: ${response.status} - ${errorText}`);
     throw new Error(`Upload Error: ${response.status}`);
   }
 
@@ -43,6 +47,9 @@ export const uploadFile = async (file: File) => {
 };
 
 export const scrapeUrl = async (url: string) => {
+  const token = localStorage.getItem('auth_token');
+  console.log('Making scrape request with token:', token ? 'Present' : 'Missing');
+  
   return apiCall('/scrape-and-ingest', {
     method: 'POST',
     body: JSON.stringify({ url }),

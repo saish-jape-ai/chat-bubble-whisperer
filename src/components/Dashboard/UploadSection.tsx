@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Upload, Globe } from 'lucide-react';
 import { uploadFile, scrapeUrl } from '@/utils/api';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface UploadSectionProps {
   onProcessStart: (taskId: string) => void;
@@ -16,23 +17,38 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ onProcessStart }) 
   const [file, setFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
+  const { token, user } = useAuth();
 
   const handleUrlSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!url) return;
 
+    if (!token || !user) {
+      toast({
+        title: "Error",
+        description: "Please login first",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsProcessing(true);
     try {
+      console.log('Starting URL scraping for:', url);
       const response = await scrapeUrl(url);
+      console.log('Scrape response:', response);
+      
       onProcessStart(response.task_id);
       toast({
         title: "Success",
         description: "URL scraping started",
       });
+      setUrl(''); // Clear the input after successful submission
     } catch (error) {
+      console.error('Scraping error:', error);
       toast({
         title: "Error",
-        description: "Failed to start scraping",
+        description: error instanceof Error ? error.message : "Failed to start scraping",
         variant: "destructive",
       });
     } finally {
@@ -44,20 +60,33 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ onProcessStart }) 
     const selectedFile = e.target.files?.[0];
     if (!selectedFile) return;
 
+    if (!token || !user) {
+      toast({
+        title: "Error",
+        description: "Please login first",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setFile(selectedFile);
     setIsProcessing(true);
     
     try {
+      console.log('Starting file upload for:', selectedFile.name);
       const response = await uploadFile(selectedFile);
+      console.log('Upload response:', response);
+      
       onProcessStart(response.task_id);
       toast({
         title: "Success",
         description: "File upload started",
       });
     } catch (error) {
+      console.error('Upload error:', error);
       toast({
         title: "Error",
-        description: "Failed to upload file",
+        description: error instanceof Error ? error.message : "Failed to upload file",
         variant: "destructive",
       });
     } finally {
@@ -80,7 +109,7 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ onProcessStart }) 
             onChange={(e) => setUrl(e.target.value)}
             required
           />
-          <Button type="submit" className="w-full" disabled={isProcessing}>
+          <Button type="submit" className="w-full" disabled={isProcessing || !token}>
             {isProcessing ? 'Starting...' : 'Start Scraping'}
           </Button>
         </form>
@@ -96,7 +125,7 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ onProcessStart }) 
             type="file"
             accept=".pdf"
             onChange={handleFileUpload}
-            disabled={isProcessing}
+            disabled={isProcessing || !token}
           />
           {file && (
             <p className="text-sm text-gray-600">
