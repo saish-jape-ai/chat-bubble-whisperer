@@ -36,8 +36,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const savedUser = localStorage.getItem('auth_user');
     
     if (savedToken && savedUser) {
-      setToken(savedToken);
-      setUser(JSON.parse(savedUser));
+      try {
+        setToken(savedToken);
+        setUser(JSON.parse(savedUser));
+      } catch (error) {
+        console.error('Error parsing saved user data:', error);
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('auth_user');
+      }
     }
     setIsLoading(false);
   }, []);
@@ -63,10 +69,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const data = await response.json();
         console.log('Login successful, received data:', data);
         
+        const userData = {
+          id: data.user.id,
+          username: data.user.username,
+          email: data.user.email
+        };
+        
         setToken(data.access_token);
-        setUser(data.user);
+        setUser(userData);
         localStorage.setItem('auth_token', data.access_token);
-        localStorage.setItem('auth_user', JSON.stringify(data.user));
+        localStorage.setItem('auth_user', JSON.stringify(userData));
         return true;
       } else {
         const errorText = await response.text();
@@ -98,10 +110,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const data = await response.json();
         console.log('Signup successful, received data:', data);
         
+        const userData = {
+          id: data.id,
+          username: data.username,
+          email: data.email
+        };
+        
         setToken(data.access_token);
-        setUser({ id: data.id, username: data.username, email: data.email });
+        setUser(userData);
         localStorage.setItem('auth_token', data.access_token);
-        localStorage.setItem('auth_user', JSON.stringify({ id: data.id, username: data.username, email: data.email }));
+        localStorage.setItem('auth_user', JSON.stringify(userData));
         return true;
       } else {
         const errorText = await response.text();
