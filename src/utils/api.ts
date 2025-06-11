@@ -1,5 +1,5 @@
 
-const API_BASE_URL = '/api';
+const API_BASE_URL = 'http://127.0.0.1:8000/api';
 
 export const apiCall = async (endpoint: string, options: RequestInit = {}) => {
   const token = localStorage.getItem('auth_token');

@@ -49,7 +49,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       formData.append('username', email);
       formData.append('password', password);
 
-      const response = await fetch('/api/login', {
+      const response = await fetch('http://127.0.0.1:8000/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -77,7 +77,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signup = async (email: string, username: string, password: string): Promise<boolean> => {
     try {
       setIsLoading(true);
-      const response = await fetch('/api/signup', {
+      const response = await fetch('http://127.0.0.1:8000/api/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
