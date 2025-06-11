@@ -70,19 +70,49 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.log('Login successful, received data:', data);
         console.log('Token received:', data.access_token ? 'Yes' : 'No');
         
-        const userData = {
-          id: data.user.id,
-          username: data.user.username,
-          email: data.user.email
-        };
-        
+        // Store the token first
         setToken(data.access_token);
-        setUser(userData);
         localStorage.setItem('auth_token', data.access_token);
-        localStorage.setItem('auth_user', JSON.stringify(userData));
         
-        console.log('Token stored in localStorage:', localStorage.getItem('auth_token') ? 'Yes' : 'No');
-        return true;
+        // Now fetch user data using the token
+        try {
+          const userResponse = await fetch('http://127.0.0.1:8000/api/me', {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${data.access_token}`,
+              'Content-Type': 'application/json',
+            },
+          });
+
+          if (userResponse.ok) {
+            const userData = await userResponse.json();
+            console.log('User data fetched:', userData);
+            
+            const userInfo = {
+              id: userData.id,
+              username: userData.username,
+              email: userData.email
+            };
+            
+            setUser(userInfo);
+            localStorage.setItem('auth_user', JSON.stringify(userInfo));
+            
+            console.log('User logged in successfully with ID:', userData.id);
+            return true;
+          } else {
+            console.error('Failed to fetch user data:', userResponse.status);
+            // Clear the token if user data fetch fails
+            setToken(null);
+            localStorage.removeItem('auth_token');
+            return false;
+          }
+        } catch (userError) {
+          console.error('Error fetching user data:', userError);
+          // Clear the token if user data fetch fails
+          setToken(null);
+          localStorage.removeItem('auth_token');
+          return false;
+        }
       } else {
         const errorText = await response.text();
         console.error('Login failed:', response.status, errorText);
