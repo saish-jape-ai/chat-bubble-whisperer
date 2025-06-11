@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { UploadSection } from './UploadSection';
 import { ProcessProgress } from './ProcessProgress';
 import { ChatbotCustomizer } from './ChatbotCustomizer';
-import { LogOut, Bot, Sparkles, Zap } from 'lucide-react';
+import { LogOut, Bot, Sparkles, Zap, Settings, Edit3 } from 'lucide-react';
 
 type DashboardStep = 'upload' | 'processing' | 'customize' | 'complete';
 
@@ -14,14 +14,17 @@ export const Dashboard: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<DashboardStep>('upload');
   const [currentTaskId, setCurrentTaskId] = useState<string | null>(null);
   const [collectionName, setCollectionName] = useState<string>('');
+  const [showCustomizer, setShowCustomizer] = useState(false);
 
   const handleProcessStart = (taskId: string) => {
+    console.log('Process started with task ID:', taskId);
     setCurrentTaskId(taskId);
     setCollectionName(taskId);
     setCurrentStep('processing');
   };
 
   const handleProcessComplete = () => {
+    console.log('Process completed');
     setCurrentStep('customize');
   };
 
@@ -33,6 +36,11 @@ export const Dashboard: React.FC = () => {
     setCurrentStep('upload');
     setCurrentTaskId(null);
     setCollectionName('');
+    setShowCustomizer(false);
+  };
+
+  const openCustomizer = () => {
+    setShowCustomizer(true);
   };
 
   const getStepNumber = (step: DashboardStep): number => {
@@ -70,7 +78,16 @@ export const Dashboard: React.FC = () => {
               </div>
             </div>
             
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4">
+              {/* Edit/Customize Chatbot Button */}
+              <Button 
+                onClick={openCustomizer}
+                className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+              >
+                <Edit3 className="w-4 h-4" />
+                Customize Chatbot
+              </Button>
+              
               <div className="text-right">
                 <p className="text-sm text-gray-600">Welcome back,</p>
                 <p className="font-semibold text-gray-900">{user?.username}</p>
@@ -88,103 +105,137 @@ export const Dashboard: React.FC = () => {
         </div>
       </header>
 
-      {/* Progress Steps */}
-      <div className="relative z-10 max-w-4xl mx-auto px-4 py-8">
-        <div className="flex items-center justify-center mb-12">
-          {['Upload Content', 'Processing', 'Customize', 'Deploy'].map((label, index) => {
-            const stepNum = index + 1;
-            const isActive = stepNum === getStepNumber(currentStep);
-            const isCompleted = stepNum < getStepNumber(currentStep);
-            
-            return (
-              <div key={label} className="flex items-center">
-                <div className={`flex items-center justify-center w-12 h-12 rounded-full border-2 transition-all duration-300 ${
-                  isActive 
-                    ? 'bg-gradient-to-r from-blue-500 to-purple-500 border-transparent text-white scale-110' 
-                    : isCompleted 
-                    ? 'bg-green-500 border-green-500 text-white' 
-                    : 'bg-white border-gray-300 text-gray-400'
-                }`}>
-                  {isCompleted ? '✓' : stepNum}
+      {/* Show Customizer if opened */}
+      {showCustomizer && (
+        <div className="relative z-10 max-w-7xl mx-auto px-4 py-8">
+          <div className="mb-6">
+            <Button 
+              onClick={() => setShowCustomizer(false)}
+              variant="outline"
+              className="mb-4"
+            >
+              ← Back to Dashboard
+            </Button>
+          </div>
+          <ChatbotCustomizer 
+            collectionName={collectionName || 'demo-collection'} 
+            onComplete={() => setShowCustomizer(false)}
+          />
+        </div>
+      )}
+
+      {/* Main Dashboard Content */}
+      {!showCustomizer && (
+        <>
+          {/* Progress Steps */}
+          <div className="relative z-10 max-w-4xl mx-auto px-4 py-8">
+            <div className="flex items-center justify-center mb-12">
+              {['Upload Content', 'Processing', 'Customize', 'Deploy'].map((label, index) => {
+                const stepNum = index + 1;
+                const isActive = stepNum === getStepNumber(currentStep);
+                const isCompleted = stepNum < getStepNumber(currentStep);
+                
+                return (
+                  <div key={label} className="flex items-center">
+                    <div className={`flex items-center justify-center w-12 h-12 rounded-full border-2 transition-all duration-300 ${
+                      isActive 
+                        ? 'bg-gradient-to-r from-blue-500 to-purple-500 border-transparent text-white scale-110' 
+                        : isCompleted 
+                        ? 'bg-green-500 border-green-500 text-white' 
+                        : 'bg-white border-gray-300 text-gray-400'
+                    }`}>
+                      {isCompleted ? '✓' : stepNum}
+                    </div>
+                    <div className="ml-3 hidden sm:block">
+                      <p className={`text-sm font-medium ${isActive ? 'text-blue-600' : isCompleted ? 'text-green-600' : 'text-gray-500'}`}>
+                        {label}
+                      </p>
+                    </div>
+                    {index < 3 && (
+                      <div className={`w-16 h-0.5 mx-4 transition-colors ${
+                        stepNum < getStepNumber(currentStep) ? 'bg-green-500' : 'bg-gray-300'
+                      }`} />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Main Content */}
+            <div className="relative z-10">
+              {currentStep === 'upload' && (
+                <div className="animate-fade-in">
+                  <div className="text-center mb-8">
+                    <Sparkles className="w-16 h-16 mx-auto mb-4 text-blue-500" />
+                    <h2 className="text-3xl font-bold text-gray-900 mb-4">Upload Your Content</h2>
+                    <p className="text-gray-600 max-w-2xl mx-auto">
+                      Start by uploading a PDF document or entering a website URL to scrape content for your chatbot
+                    </p>
+                  </div>
+                  <UploadSection onProcessStart={handleProcessStart} />
                 </div>
-                <div className="ml-3 hidden sm:block">
-                  <p className={`text-sm font-medium ${isActive ? 'text-blue-600' : isCompleted ? 'text-green-600' : 'text-gray-500'}`}>
-                    {label}
+              )}
+
+              {currentStep === 'processing' && currentTaskId && (
+                <div className="animate-fade-in">
+                  <div className="text-center mb-8">
+                    <Zap className="w-16 h-16 mx-auto mb-4 text-yellow-500 animate-pulse" />
+                    <h2 className="text-3xl font-bold text-gray-900 mb-4">Processing Your Content</h2>
+                    <p className="text-gray-600">
+                      We're analyzing and preparing your content. This may take a few minutes.
+                    </p>
+                  </div>
+                  <ProcessProgress taskId={currentTaskId} onComplete={handleProcessComplete} />
+                </div>
+              )}
+
+              {currentStep === 'customize' && collectionName && (
+                <div className="animate-fade-in">
+                  <div className="text-center mb-8">
+                    <Bot className="w-16 h-16 mx-auto mb-4 text-purple-500" />
+                    <h2 className="text-3xl font-bold text-gray-900 mb-4">Customize Your Chatbot</h2>
+                    <p className="text-gray-600">
+                      Personalize your chatbot's appearance and behavior
+                    </p>
+                  </div>
+                  <ChatbotCustomizer 
+                    collectionName={collectionName} 
+                    onComplete={handleCustomizationComplete}
+                  />
+                </div>
+              )}
+
+              {currentStep === 'complete' && (
+                <div className="animate-fade-in text-center">
+                  <div className="w-24 h-24 bg-gradient-to-r from-green-500 to-blue-500 rounded-full mx-auto mb-6 flex items-center justify-center">
+                    <Bot className="w-12 h-12 text-white" />
+                  </div>
+                  <h2 className="text-3xl font-bold text-gray-900 mb-4">🎉 Chatbot Ready!</h2>
+                  <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
+                    Your chatbot has been successfully created and is ready to be deployed on your website.
                   </p>
+                  <div className="flex gap-4 justify-center">
+                    <Button 
+                      onClick={openCustomizer}
+                      className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 px-8 py-3 text-lg"
+                    >
+                      <Settings className="w-5 h-5 mr-2" />
+                      Customize More
+                    </Button>
+                    <Button 
+                      onClick={resetProcess}
+                      variant="outline"
+                      className="px-8 py-3 text-lg"
+                    >
+                      Create Another Chatbot
+                    </Button>
+                  </div>
                 </div>
-                {index < 3 && (
-                  <div className={`w-16 h-0.5 mx-4 transition-colors ${
-                    stepNum < getStepNumber(currentStep) ? 'bg-green-500' : 'bg-gray-300'
-                  }`} />
-                )}
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Main Content */}
-        <div className="relative z-10">
-          {currentStep === 'upload' && (
-            <div className="animate-fade-in">
-              <div className="text-center mb-8">
-                <Sparkles className="w-16 h-16 mx-auto mb-4 text-blue-500" />
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">Upload Your Content</h2>
-                <p className="text-gray-600 max-w-2xl mx-auto">
-                  Start by uploading a PDF document or entering a website URL to scrape content for your chatbot
-                </p>
-              </div>
-              <UploadSection onProcessStart={handleProcessStart} />
+              )}
             </div>
-          )}
-
-          {currentStep === 'processing' && currentTaskId && (
-            <div className="animate-fade-in">
-              <div className="text-center mb-8">
-                <Zap className="w-16 h-16 mx-auto mb-4 text-yellow-500 animate-pulse" />
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">Processing Your Content</h2>
-                <p className="text-gray-600">
-                  We're analyzing and preparing your content. This may take a few minutes.
-                </p>
-              </div>
-              <ProcessProgress taskId={currentTaskId} onComplete={handleProcessComplete} />
-            </div>
-          )}
-
-          {currentStep === 'customize' && collectionName && (
-            <div className="animate-fade-in">
-              <div className="text-center mb-8">
-                <Bot className="w-16 h-16 mx-auto mb-4 text-purple-500" />
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">Customize Your Chatbot</h2>
-                <p className="text-gray-600">
-                  Personalize your chatbot's appearance and behavior
-                </p>
-              </div>
-              <ChatbotCustomizer 
-                collectionName={collectionName} 
-                onComplete={handleCustomizationComplete}
-              />
-            </div>
-          )}
-
-          {currentStep === 'complete' && (
-            <div className="animate-fade-in text-center">
-              <div className="w-24 h-24 bg-gradient-to-r from-green-500 to-blue-500 rounded-full mx-auto mb-6 flex items-center justify-center">
-                <Bot className="w-12 h-12 text-white" />
-              </div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">🎉 Chatbot Ready!</h2>
-              <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-                Your chatbot has been successfully created and is ready to be deployed on your website.
-              </p>
-              <Button 
-                onClick={resetProcess}
-                className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 px-8 py-3 text-lg"
-              >
-                Create Another Chatbot
-              </Button>
-            </div>
-          )}
-        </div>
-      </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };
