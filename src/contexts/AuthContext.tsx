@@ -68,6 +68,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (response.ok) {
         const data = await response.json();
         console.log('Login successful, received data:', data);
+        console.log('Token received:', data.access_token ? 'Yes' : 'No');
         
         const userData = {
           id: data.user.id,
@@ -79,6 +80,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(userData);
         localStorage.setItem('auth_token', data.access_token);
         localStorage.setItem('auth_user', JSON.stringify(userData));
+        
+        console.log('Token stored in localStorage:', localStorage.getItem('auth_token') ? 'Yes' : 'No');
         return true;
       } else {
         const errorText = await response.text();
@@ -110,16 +113,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const data = await response.json();
         console.log('Signup successful, received data:', data);
         
-        const userData = {
-          id: data.id,
-          username: data.username,
-          email: data.email
-        };
-        
-        setToken(data.access_token);
-        setUser(userData);
-        localStorage.setItem('auth_token', data.access_token);
-        localStorage.setItem('auth_user', JSON.stringify(userData));
+        // DO NOT automatically log in - user must go through login process
+        // This ensures proper token generation and storage
         return true;
       } else {
         const errorText = await response.text();

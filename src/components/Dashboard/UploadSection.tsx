@@ -1,8 +1,9 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import { Upload, Globe, FileText, Sparkles, ArrowRight } from 'lucide-react';
+import { Upload, Globe, FileText, Sparkles, ArrowRight, AlertTriangle } from 'lucide-react';
 import { uploadFile, scrapeUrl } from '@/utils/api';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
@@ -16,11 +17,20 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ onProcessStart }) 
   const [file, setFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
-  const { token, user } = useAuth();
+  const { token, user, logout } = useAuth();
 
   console.log('UploadSection - Token present:', token ? 'Yes' : 'No');
   console.log('UploadSection - User present:', user ? 'Yes' : 'No');
   console.log('UploadSection - User ID:', user?.id);
+
+  const handleAuthError = () => {
+    toast({
+      title: "Authentication Error",
+      description: "Your session has expired. Please login again.",
+      variant: "destructive",
+    });
+    logout();
+  };
 
   const handleUrlSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,11 +45,7 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ onProcessStart }) 
 
     if (!token || !user) {
       console.error('Missing authentication:', { token: !!token, user: !!user });
-      toast({
-        title: "Error",
-        description: "Please login first",
-        variant: "destructive",
-      });
+      handleAuthError();
       return;
     }
 
@@ -60,11 +66,15 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ onProcessStart }) 
       setUrl('');
     } catch (error) {
       console.error('Scraping error details:', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to start scraping",
-        variant: "destructive",
-      });
+      if (error instanceof Error && error.message.includes('Authentication')) {
+        handleAuthError();
+      } else {
+        toast({
+          title: "Error",
+          description: error instanceof Error ? error.message : "Failed to start scraping",
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsProcessing(false);
     }
@@ -74,22 +84,38 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ onProcessStart }) 
     const selectedFile = e.target.files?.[0];
     if (!selectedFile) return;
 
-    if (!selectedFile.type.includes('pdf')) {
+    console.log('=== FILE SELECTION ===');
+    console.log('Selected file:', selectedFile.name);
+    console.log('File type:', selectedFile.type);
+    console.log('File size:', selectedFile.size);
+
+    // Validate file type
+    if (!selectedFile.type.includes('pdf') && !selectedFile.name.toLowerCase().endsWith('.pdf')) {
       toast({
-        title: "Error",
-        description: "Please select a PDF file",
+        title: "Invalid File Type",
+        description: "Please select a PDF file only",
         variant: "destructive",
       });
+      e.target.value = ''; // Reset input
+      return;
+    }
+
+    // Validate file size (10MB limit)
+    const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+    if (selectedFile.size > maxSize) {
+      toast({
+        title: "File Too Large",
+        description: "Please select a PDF file smaller than 10MB",
+        variant: "destructive",
+      });
+      e.target.value = ''; // Reset input
       return;
     }
 
     if (!token || !user) {
       console.error('Missing authentication for file upload:', { token: !!token, user: !!user });
-      toast({
-        title: "Error",
-        description: "Please login first",
-        variant: "destructive",
-      });
+      handleAuthError();
+      e.target.value = ''; // Reset input
       return;
     }
 
@@ -110,17 +136,43 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ onProcessStart }) 
         title: "Success! 🎉",
         description: "File upload started successfully",
       });
+      
+      // Reset file input after successful upload
+      e.target.value = '';
+      setFile(null);
     } catch (error) {
       console.error('Upload error details:', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to upload file",
-        variant: "destructive",
-      });
+      if (error instanceof Error && error.message.includes('Authentication')) {
+        handleAuthError();
+      } else {
+        toast({
+          title: "Upload Error",
+          description: error instanceof Error ? error.message : "Failed to upload file",
+          variant: "destructive",
+        });
+      }
+      // Reset file input on error
+      e.target.value = '';
+      setFile(null);
     } finally {
       setIsProcessing(false);
     }
   };
+
+  // Show authentication warning if no token
+  if (!token || !user) {
+    return (
+      <div className="max-w-4xl mx-auto">
+        <Card className="p-8 bg-yellow-50 border-yellow-200">
+          <div className="text-center">
+            <AlertTriangle className="w-16 h-16 mx-auto mb-4 text-yellow-500" />
+            <h3 className="text-xl font-bold text-yellow-800 mb-2">Authentication Required</h3>
+            <p className="text-yellow-700">Please login to upload content and create your chatbot.</p>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
@@ -159,7 +211,7 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ onProcessStart }) 
             <Button 
               type="submit" 
               className="w-full h-12 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed" 
-              disabled={isProcessing || !token || !url.trim()}
+              disabled={isProcessing || !url.trim()}
             >
               {isProcessing ? (
                 <div className="flex items-center gap-2">
@@ -212,9 +264,9 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ onProcessStart }) 
               <div className="relative">
                 <Input
                   type="file"
-                  accept=".pdf"
+                  accept=".pdf,application/pdf"
                   onChange={handleFileUpload}
-                  disabled={isProcessing || !token}
+                  disabled={isProcessing}
                   className="h-12 border-2 border-gray-200 focus:border-emerald-500 transition-colors rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100"
                 />
               </div>
@@ -247,15 +299,6 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ onProcessStart }) 
               📄 <strong>Supported:</strong> PDF files up to 10MB. Text-based PDFs work best for content extraction.
             </p>
           </div>
-
-          {/* Debug Info */}
-          {process.env.NODE_ENV === 'development' && (
-            <div className="mt-4 p-3 bg-gray-100 rounded text-xs">
-              <p>Debug: Token: {token ? 'Present' : 'Missing'}</p>
-              <p>Debug: User: {user ? user.username : 'Missing'}</p>
-              <p>Debug: User ID: {user?.id || 'N/A'}</p>
-            </div>
-          )}
         </div>
       </Card>
     </div>

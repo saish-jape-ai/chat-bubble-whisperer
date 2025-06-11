@@ -24,9 +24,17 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
     
     if (success) {
       toast({
-        title: "Account Created!",
-        description: "Welcome to ChatBot Builder",
+        title: "Account Created Successfully! 🎉",
+        description: "Please login to access your dashboard",
       });
+      // Reset form
+      setEmail('');
+      setUsername('');
+      setPassword('');
+      // Switch to login form after successful signup
+      setTimeout(() => {
+        onSwitchToLogin();
+      }, 1500);
     } else {
       toast({
         title: "Signup Failed",
