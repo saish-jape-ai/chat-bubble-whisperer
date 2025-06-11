@@ -51,11 +51,11 @@ export const scrapeUrl = async (url: string) => {
 
 export const getTaskStatus = (taskId: string) => {
   const token = localStorage.getItem('auth_token');
-  return new EventSource(`${API_BASE_URL}/process-status/${taskId}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const url = new URL(`${API_BASE_URL}/process-status/${taskId}`, window.location.origin);
+  if (token) {
+    url.searchParams.append('token', token);
+  }
+  return new EventSource(url.toString());
 };
 
 export const askQuestion = async (question: string, collectionName: string) => {
