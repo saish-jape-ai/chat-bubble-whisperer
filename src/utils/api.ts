@@ -4,19 +4,29 @@ const API_BASE_URL = 'http://127.0.0.1:8000/api';
 export const apiCall = async (endpoint: string, options: RequestInit = {}) => {
   const token = localStorage.getItem('auth_token');
   
+  console.log('Making API call to:', `${API_BASE_URL}${endpoint}`);
+  console.log('Token present:', token ? 'Yes' : 'No');
+  console.log('Token value (first 50 chars):', token ? token.substring(0, 50) + '...' : 'No token');
+
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
-    ...(token && { Authorization: `Bearer ${token}` }),
     ...options.headers,
   };
 
-  console.log('Making API call to:', `${API_BASE_URL}${endpoint}`);
-  console.log('With headers:', headers);
+  // Only add Authorization header if token exists
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  console.log('Request headers:', headers);
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
     headers,
   });
+
+  console.log('Response status:', response.status);
+  console.log('Response headers:', Object.fromEntries(response.headers.entries()));
 
   if (!response.ok) {
     const errorText = await response.text();
@@ -32,15 +42,26 @@ export const uploadFile = async (file: File) => {
   const formData = new FormData();
   formData.append('file', file);
 
-  console.log('Uploading file with token:', token ? 'Present' : 'Missing');
+  console.log('Uploading file:', file.name);
+  console.log('Token present for upload:', token ? 'Yes' : 'No');
+  console.log('Token value (first 50 chars):', token ? token.substring(0, 50) + '...' : 'No token');
+
+  const headers: HeadersInit = {};
+  
+  // Only add Authorization header if token exists
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  console.log('Upload headers:', headers);
 
   const response = await fetch(`${API_BASE_URL}/upload-and-process`, {
     method: 'POST',
-    headers: {
-      ...(token && { Authorization: `Bearer ${token}` }),
-    },
+    headers,
     body: formData,
   });
+
+  console.log('Upload response status:', response.status);
 
   if (!response.ok) {
     const errorText = await response.text();
@@ -53,8 +74,9 @@ export const uploadFile = async (file: File) => {
 
 export const scrapeUrl = async (url: string) => {
   const token = localStorage.getItem('auth_token');
-  console.log('Making scrape request with token:', token ? 'Present' : 'Missing');
-  console.log('Token value (first 20 chars):', token ? token.substring(0, 20) + '...' : 'No token');
+  console.log('Making scrape request for URL:', url);
+  console.log('Token present for scrape:', token ? 'Yes' : 'No');
+  console.log('Token value (first 50 chars):', token ? token.substring(0, 50) + '...' : 'No token');
   
   try {
     return await apiCall('/scrape-and-ingest', {

@@ -14,12 +14,15 @@ export const Dashboard: React.FC = () => {
   const [currentTaskId, setCurrentTaskId] = useState<string | null>(null);
   const [showCustomizer, setShowCustomizer] = useState(false);
 
-  // Use user ID as collection name instead of task ID
+  // Use user ID as collection name (this is consistent and doesn't change)
   const collectionName = user?.id || 'default-collection';
+
+  console.log('Dashboard - User ID (Collection Name):', collectionName);
+  console.log('Dashboard - Current Task ID:', currentTaskId);
 
   const handleProcessStart = (taskId: string) => {
     console.log('Process started with task ID:', taskId);
-    console.log('Using collection name (user ID):', collectionName);
+    console.log('Collection will be:', collectionName);
     setCurrentTaskId(taskId);
     setCurrentStep('processing');
   };

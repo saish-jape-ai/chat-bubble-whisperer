@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,6 +18,10 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ onProcessStart }) 
   const { toast } = useToast();
   const { token, user } = useAuth();
 
+  console.log('UploadSection - Token present:', token ? 'Yes' : 'No');
+  console.log('UploadSection - User present:', user ? 'Yes' : 'No');
+  console.log('UploadSection - User ID:', user?.id);
+
   const handleUrlSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!url.trim()) {
@@ -31,6 +34,7 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ onProcessStart }) 
     }
 
     if (!token || !user) {
+      console.error('Missing authentication:', { token: !!token, user: !!user });
       toast({
         title: "Error",
         description: "Please login first",
@@ -42,6 +46,9 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ onProcessStart }) 
     setIsProcessing(true);
     try {
       console.log('Starting URL scraping for:', url);
+      console.log('With user ID:', user.id);
+      console.log('Token available:', !!token);
+      
       const response = await scrapeUrl(url);
       console.log('Scrape response:', response);
       
@@ -52,7 +59,7 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ onProcessStart }) 
       });
       setUrl('');
     } catch (error) {
-      console.error('Scraping error:', error);
+      console.error('Scraping error details:', error);
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to start scraping",
@@ -77,6 +84,7 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ onProcessStart }) 
     }
 
     if (!token || !user) {
+      console.error('Missing authentication for file upload:', { token: !!token, user: !!user });
       toast({
         title: "Error",
         description: "Please login first",
@@ -90,6 +98,10 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ onProcessStart }) 
     
     try {
       console.log('Starting file upload for:', selectedFile.name);
+      console.log('With user ID:', user.id);
+      console.log('File size:', selectedFile.size);
+      console.log('Token available:', !!token);
+      
       const response = await uploadFile(selectedFile);
       console.log('Upload response:', response);
       
@@ -99,7 +111,7 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ onProcessStart }) 
         description: "File upload started successfully",
       });
     } catch (error) {
-      console.error('Upload error:', error);
+      console.error('Upload error details:', error);
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to upload file",
@@ -168,6 +180,15 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ onProcessStart }) 
               💡 <strong>Tip:</strong> Make sure the website is publicly accessible and doesn't require authentication.
             </p>
           </div>
+
+          {/* Debug Info */}
+          {process.env.NODE_ENV === 'development' && (
+            <div className="mt-4 p-3 bg-gray-100 rounded text-xs">
+              <p>Debug: Token: {token ? 'Present' : 'Missing'}</p>
+              <p>Debug: User: {user ? user.username : 'Missing'}</p>
+              <p>Debug: User ID: {user?.id || 'N/A'}</p>
+            </div>
+          )}
         </div>
       </Card>
 
@@ -226,6 +247,15 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ onProcessStart }) 
               📄 <strong>Supported:</strong> PDF files up to 10MB. Text-based PDFs work best for content extraction.
             </p>
           </div>
+
+          {/* Debug Info */}
+          {process.env.NODE_ENV === 'development' && (
+            <div className="mt-4 p-3 bg-gray-100 rounded text-xs">
+              <p>Debug: Token: {token ? 'Present' : 'Missing'}</p>
+              <p>Debug: User: {user ? user.username : 'Missing'}</p>
+              <p>Debug: User ID: {user?.id || 'N/A'}</p>
+            </div>
+          )}
         </div>
       </Card>
     </div>
