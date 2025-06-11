@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -13,18 +12,20 @@ export const Dashboard: React.FC = () => {
   const { user, logout } = useAuth();
   const [currentStep, setCurrentStep] = useState<DashboardStep>('upload');
   const [currentTaskId, setCurrentTaskId] = useState<string | null>(null);
-  const [collectionName, setCollectionName] = useState<string>('');
   const [showCustomizer, setShowCustomizer] = useState(false);
+
+  // Use user ID as collection name instead of task ID
+  const collectionName = user?.id || 'default-collection';
 
   const handleProcessStart = (taskId: string) => {
     console.log('Process started with task ID:', taskId);
+    console.log('Using collection name (user ID):', collectionName);
     setCurrentTaskId(taskId);
-    setCollectionName(taskId);
     setCurrentStep('processing');
   };
 
   const handleProcessComplete = () => {
-    console.log('Process completed');
+    console.log('Process completed for collection:', collectionName);
     setCurrentStep('customize');
   };
 
@@ -35,7 +36,6 @@ export const Dashboard: React.FC = () => {
   const resetProcess = () => {
     setCurrentStep('upload');
     setCurrentTaskId(null);
-    setCollectionName('');
     setShowCustomizer(false);
   };
 
@@ -91,6 +91,7 @@ export const Dashboard: React.FC = () => {
               <div className="text-right">
                 <p className="text-sm text-gray-600">Welcome back,</p>
                 <p className="font-semibold text-gray-900">{user?.username}</p>
+                <p className="text-xs text-gray-500">ID: {user?.id}</p>
               </div>
               <Button 
                 onClick={logout} 
@@ -118,7 +119,7 @@ export const Dashboard: React.FC = () => {
             </Button>
           </div>
           <ChatbotCustomizer 
-            collectionName={collectionName || 'demo-collection'} 
+            collectionName={collectionName} 
             onComplete={() => setShowCustomizer(false)}
           />
         </div>

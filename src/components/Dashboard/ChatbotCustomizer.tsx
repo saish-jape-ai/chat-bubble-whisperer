@@ -1,10 +1,12 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
+import { saveChatbotConfig, getChatbotConfig } from '@/utils/api';
 import { Copy, Download, Palette, MessageSquare, Type, Paintbrush, Settings } from 'lucide-react';
 
 interface ChatbotCustomizerProps {
@@ -34,6 +36,7 @@ export const ChatbotCustomizer: React.FC<ChatbotCustomizerProps> = ({
   collectionName, 
   onComplete 
 }) => {
+  const { user } = useAuth();
   const [customTitle, setCustomTitle] = useState('AI Assistant');
   const [customSubtitle, setCustomSubtitle] = useState('Always here to help');
   const [primaryColor, setPrimaryColor] = useState('#3B82F6');
@@ -44,7 +47,72 @@ export const ChatbotCustomizer: React.FC<ChatbotCustomizerProps> = ({
   const [fontStyle, setFontStyle] = useState('normal');
   const [borderRadius, setBorderRadius] = useState('12');
   const [chatPosition, setChatPosition] = useState('bottom-right');
+  const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
+
+  // Load existing configuration on component mount
+  useEffect(() => {
+    if (user?.id) {
+      loadChatbotConfig();
+    }
+  }, [user?.id]);
+
+  const loadChatbotConfig = async () => {
+    try {
+      const config = await getChatbotConfig(user!.id);
+      if (config) {
+        setCustomTitle(config.title || 'AI Assistant');
+        setCustomSubtitle(config.subtitle || 'Always here to help');
+        setPrimaryColor(config.primaryColor || '#3B82F6');
+        setSecondaryColor(config.secondaryColor || '#F8FAFC');
+        setTextColor(config.textColor || '#1F2937');
+        setFontFamily(config.fontFamily || 'Inter, sans-serif');
+        setFontSize(config.fontSize || '14');
+        setFontStyle(config.fontStyle || 'normal');
+        setBorderRadius(config.borderRadius || '12');
+        setChatPosition(config.position || 'bottom-right');
+      }
+    } catch (error) {
+      console.log('No existing config found, using defaults');
+    }
+  };
+
+  const saveConfiguration = async () => {
+    if (!user?.id) return;
+
+    setIsSaving(true);
+    try {
+      const config = {
+        userId: user.id,
+        title: customTitle,
+        subtitle: customSubtitle,
+        primaryColor,
+        secondaryColor,
+        textColor,
+        fontFamily,
+        fontSize,
+        fontStyle,
+        borderRadius,
+        position: chatPosition,
+        collectionName
+      };
+
+      await saveChatbotConfig(config);
+      toast({
+        title: "Configuration Saved! 💾",
+        description: "Your chatbot customization has been saved",
+      });
+    } catch (error) {
+      console.error('Error saving configuration:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save configuration",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const generateIframeCode = () => {
     return `<!-- ChatBot Widget - Add this to your website's <head> section -->
@@ -61,6 +129,7 @@ export const ChatbotCustomizer: React.FC<ChatbotCustomizerProps> = ({
     borderRadius: '${borderRadius}px',
     position: '${chatPosition}',
     collectionName: '${collectionName}',
+    userId: '${user?.id}',
     apiUrl: 'http://127.0.0.1:8000/api'
   };
 </script>
@@ -82,13 +151,22 @@ export const ChatbotCustomizer: React.FC<ChatbotCustomizerProps> = ({
   font-weight: ${fontStyle.includes('bold') ? 'bold' : 'normal'};
   box-shadow: 0 10px 25px rgba(0,0,0,0.15);
   max-width: 300px;
+  cursor: pointer;
 ">
   <div style="font-weight: bold; margin-bottom: 4px; color: white;">${customTitle}</div>
   <div style="font-size: 12px; opacity: 0.9; color: white;">${customSubtitle}</div>
   <div style="margin-top: 8px; font-size: 10px; color: white; opacity: 0.7;">
-    Collection: ${collectionName}
+    User ID: ${user?.id || 'N/A'}
   </div>
-</div>`;
+</div>
+
+<script>
+// Add click handler to open chat
+document.getElementById('chatbot-container').onclick = function() {
+  // Initialize chat interface here
+  console.log('Opening chat with config:', window.chatbotConfig);
+};
+</script>`;
   };
 
   const copyToClipboard = () => {
@@ -111,7 +189,8 @@ export const ChatbotCustomizer: React.FC<ChatbotCustomizerProps> = ({
     URL.revokeObjectURL(url);
   };
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
+    await saveConfiguration();
     toast({
       title: "Customization Complete! 🎉",
       description: "Your chatbot is ready for deployment",
@@ -138,6 +217,7 @@ export const ChatbotCustomizer: React.FC<ChatbotCustomizerProps> = ({
         </div>
         <h2 className="text-3xl font-bold text-gray-900 mb-2">Customize Your Chatbot</h2>
         <p className="text-gray-600">Personalize every aspect of your chatbot's appearance and behavior</p>
+        <p className="text-sm text-blue-600 mt-2">Collection: {collectionName} | User: {user?.username}</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -145,9 +225,19 @@ export const ChatbotCustomizer: React.FC<ChatbotCustomizerProps> = ({
         <div className="space-y-6">
           {/* Basic Settings */}
           <Card className="p-6 bg-gradient-to-br from-white to-gray-50 border-0 shadow-lg">
-            <div className="flex items-center gap-3 mb-6">
-              <Settings className="w-6 h-6 text-blue-500" />
-              <h3 className="text-xl font-bold text-gray-900">Basic Settings</h3>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <Settings className="w-6 h-6 text-blue-500" />
+                <h3 className="text-xl font-bold text-gray-900">Basic Settings</h3>
+              </div>
+              <Button 
+                onClick={saveConfiguration}
+                disabled={isSaving}
+                size="sm"
+                className="bg-green-500 hover:bg-green-600"
+              >
+                {isSaving ? 'Saving...' : 'Save'}
+              </Button>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -405,11 +495,17 @@ export const ChatbotCustomizer: React.FC<ChatbotCustomizerProps> = ({
               📋 Deployment Instructions
             </h4>
             <ol className="text-blue-800 text-sm space-y-2 list-decimal list-inside">
+              <li>Save your configuration using the "Save" button</li>
               <li>Copy the embed code above</li>
               <li>Paste it into your website's HTML &lt;head&gt; section</li>
               <li>The chatbot will automatically appear in the selected position</li>
               <li>Your visitors can now interact with your AI assistant!</li>
             </ol>
+            <div className="mt-4 p-3 bg-blue-100 rounded-lg">
+              <p className="text-blue-800 text-xs">
+                <strong>Note:</strong> The chatbot uses your User ID ({user?.id}) as the collection identifier.
+              </p>
+            </div>
           </Card>
         </div>
       </div>
